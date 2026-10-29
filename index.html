@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f1e7">
+  <meta name="description" content="四段旅程，一個慢慢展開的故事。">
+  <title>四段旅程・一個故事</title>
+  <style>
+    :root {
+      --paper: #f7f1e7;
+      --ink: #4d514e;
+      --muted: #7b7e77;
+      --accent: #b77c5c;
+      --line: rgba(93, 91, 79, .16);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC",
+                   "Microsoft JhengHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    body { overscroll-behavior: none; }
+    button, a { font: inherit; -webkit-tap-highlight-color: transparent; }
+    .app {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      height: 100svh;
+      height: 100dvh;
+      overflow: hidden;
+      background: var(--paper);
+    }
+    .track {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+    }
+    .track::-webkit-scrollbar { display: none; }
+    .chapter {
+      flex: 0 0 100%;
+      min-width: 0;
+      height: 100%;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      background: var(--paper);
+      overflow: hidden;
+    }
+    .artwork {
+      min-height: 0;
+      flex: 1 1 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 8px 10px 0;
+      overflow: hidden;
+    }
+    .artwork img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .bottom-panel {
+      flex: 0 0 auto;
+      min-height: 98px;
+      padding: 8px 18px calc(10px + var(--safe-bottom));
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      background: rgba(247, 241, 231, .98);
+      border-top: 1px solid var(--line);
+    }
+    .chapter-meta { min-width: 0; }
+    .chapter-number {
+      font-size: 10px;
+      letter-spacing: .18em;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+    .chapter-name {
+      font-size: 15px;
+      line-height: 1.35;
+      font-weight: 600;
+      letter-spacing: .04em;
+      overflow-wrap: anywhere;
+    }
+    .chapter-hint {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+    .enter-button {
+      min-width: 112px;
+      min-height: 46px;
+      border: 1px solid rgba(153, 107, 79, .45);
+      border-radius: 999px;
+      padding: 0 15px;
+      background: #fffaf2;
+      color: #83583f;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .03em;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: transform .18s ease, background .18s ease, opacity .18s ease;
+    }
+    .enter-button:active { transform: scale(.97); }
+    .enter-button:disabled {
+      color: #89877f;
+      background: #eee9df;
+      border-color: #ded7ca;
+      cursor: default;
+      opacity: .95;
+    }
+    .navigation {
+      position: absolute;
+      z-index: 5;
+      left: 0;
+      right: 0;
+      top: 10px;
+      padding: 0 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+    }
+    .brand, .count {
+      pointer-events: none;
+      background: rgba(250, 247, 240, .84);
+      border: 1px solid rgba(255,255,255,.7);
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 10px;
+      letter-spacing: .1em;
+      color: #6c6b61;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .swipe-note {
+      position: absolute;
+      z-index: 4;
+      top: 47px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #77766c;
+      font-size: 10px;
+      letter-spacing: .08em;
+      background: rgba(250,247,240,.78);
+      padding: 5px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+      pointer-events: none;
+      transition: opacity .3s ease;
+    }
+    .swipe-note.hide { opacity: 0; }
+    .toast {
+      position: absolute;
+      z-index: 10;
+      left: 50%;
+      bottom: calc(112px + var(--safe-bottom));
+      transform: translate(-50%, 10px);
+      max-width: calc(100% - 40px);
+      padding: 11px 15px;
+      border-radius: 14px;
+      color: #fffaf2;
+      background: rgba(55, 56, 51, .9);
+      font-size: 13px;
+      text-align: center;
+      line-height: 1.5;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .dots {
+      position: absolute;
+      z-index: 5;
+      bottom: calc(101px + var(--safe-bottom));
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 7px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(250,247,240,.82);
+      pointer-events: none;
+    }
+    .dot { width: 5px; height: 5px; border-radius: 50%; background: #c8c1b4; }
+    .dot.active { width: 17px; border-radius: 99px; background: var(--accent); }
+    @media (min-width: 700px) {
+      /* 桌機也能預覽，但視覺仍維持手機繪本比例 */
+      .chapter { background: #eae3d8; }
+      .artwork { padding-top: 12px; }
+      .artwork img { max-width: 430px; }
+      .bottom-panel { padding-left: max(22px, calc((100% - 430px) / 2)); padding-right: max(22px, calc((100% - 430px) / 2)); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .track { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app" aria-label="四段旅程，一個故事">
+    <div class="navigation" aria-hidden="true">
+      <span class="brand">OUR LITTLE STORY</span>
+      <span class="count" id="count">01 / 04</span>
+    </div>
+    <div class="swipe-note" id="swipeNote">左右滑動，翻開下一段故事　↔</div>
+
+    <div class="track" id="track" aria-label="四個故事章節">
+      <section class="chapter" data-index="0" aria-label="第一章：初次的風景">
+        <div class="artwork">
+          <img src="assets/images/chapter-01.png" alt="第一章插畫：初次的風景" draggable="false">
+        </div>
+        <div class="bottom-panel">
+          <div class="chapter-meta">
+            <div class="chapter-number">CHAPTER 01 · 7 分</div>
+            <div class="chapter-name">初次的風景</div>
+            <div class="chapter-hint">一段新鮮的開始。</div>
+          </div>
+          <button class="enter-button" data-chapter="first" type="button">尚未開放</button>
+        </div>
+      </section>
+
+      <section class="chapter" data-index="1" aria-label="第二章：意外的轉彎">
+        <div class="artwork">
+          <img src="assets/images/chapter-02.png" alt="第二章插畫：意外的轉彎" draggable="false">
+        </div>
+        <div class="bottom-panel">
+          <div class="chapter-meta">
+            <div class="chapter-number">CHAPTER 02 · 8 分</div>
+            <div class="chapter-name">意外的轉彎</div>
+            <div class="chapter-hint">一起探索更多可能。</div>
+          </div>
+          <button class="enter-button" data-chapter="second" type="button">尚未開放</button>
+        </div>
+      </section>
+
+      <section class="chapter" data-index="2" aria-label="第三章：更熟悉的時間">
+        <div class="artwork">
+          <img src="assets/images/chapter-03.png" alt="第三章插畫：更熟悉的時間" draggable="false">
+        </div>
+        <div class="bottom-panel">
+          <div class="chapter-meta">
+            <div class="chapter-number">CHAPTER 03 · 9 分</div>
+            <div class="chapter-name">更熟悉的時間</div>
+            <div class="chapter-hint">讓默契在相處中慢慢發生。</div>
+          </div>
+          <button class="enter-button" data-chapter="third" type="button">尚未開放</button>
+        </div>
+      </section>
+
+      <section class="chapter" data-index="3" aria-label="第四章：下一段旅程">
+        <div class="artwork">
+          <img src="assets/images/chapter-04.png" alt="第四章插畫：下一段旅程" draggable="false">
+        </div>
+        <div class="bottom-panel">
+          <div class="chapter-meta">
+            <div class="chapter-number">CHAPTER 04 · 10 分</div>
+            <div class="chapter-name">下一段旅程</div>
+            <div class="chapter-hint">故事還沒結束，還有新的風景。</div>
+          </div>
+          <button class="enter-button" data-chapter="fourth" type="button">尚未開放</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="dots" id="dots" aria-hidden="true">
+      <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </main>
+
+  <script>
+    /*
+      章節開放設定：
+      true  = 顯示「進入故事」並前往對應獨立網頁
+      false = 顯示「尚未開放」
+      目前全部關閉，等章節網頁做好後再逐一開放。
+    */
+    const CHAPTERS = {
+      first:  { open: false, url: "chapters/chapter-01.html" },
+      second: { open: false, url: "chapters/chapter-02.html" },
+      third:  { open: false, url: "chapters/chapter-03.html" },
+      fourth: { open: false, url: "chapters/chapter-04.html" }
+    };
+
+    const track = document.getElementById("track");
+    const count = document.getElementById("count");
+    const dots = [...document.querySelectorAll(".dot")];
+    const swipeNote = document.getElementById("swipeNote");
+    const toast = document.getElementById("toast");
+    let toastTimer;
+
+    document.querySelectorAll(".enter-button").forEach(button => {
+      const config = CHAPTERS[button.dataset.chapter];
+      if (config && config.open) {
+        button.disabled = false;
+        button.textContent = "進入故事　→";
+        button.addEventListener("click", () => {
+          window.location.href = config.url;
+        });
+      } else {
+        button.disabled = true;
+        button.textContent = "尚未開放";
+        button.addEventListener("click", () => showToast("這一章還在準備中，之後再一起揭曉。"));
+      }
+    });
+
+    function updatePage() {
+      const pageWidth = track.clientWidth || window.innerWidth;
+      const index = Math.max(0, Math.min(3, Math.round(track.scrollLeft / pageWidth)));
+      count.textContent = String(index + 1).padStart(2, "0") + " / 04";
+      dots.forEach((dot, i) => dot.classList.toggle("active", i === index));
+      if (index > 0) swipeNote.classList.add("hide");
+    }
+    track.addEventListener("scroll", updatePage, { passive: true });
+    window.addEventListener("resize", updatePage);
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
+    }
+
+    // 圖片若載入失敗，顯示清楚的提示，方便檢查路徑。
+    document.querySelectorAll(".artwork img").forEach(img => {
+      img.addEventListener("error", () => {
+        img.alt = "圖片載入失敗，請確認路徑：" + img.getAttribute("src");
+        img.style.visibility = "hidden";
+        const note = document.createElement("div");
+        note.style.cssText = "padding:24px;text-align:center;color:#7b7e77;font-size:13px;line-height:1.7";
+        note.textContent = "圖片暫時無法載入。請確認檔案位於 assets/images/，且檔名與大小寫完全相同。";
+        img.parentElement.appendChild(note);
+      });
+    });
+
+    // 第一次停留時提示左右滑動，稍後淡出。
+    setTimeout(() => swipeNote.classList.add("hide"), 4500);
+    updatePage();
+  </script>
+</body>
+</html>
