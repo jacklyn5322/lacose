@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#dceaf0">
+  <meta name="description" content="四段旅程，一個慢慢展開的故事。">
+  <title>四段旅程・一個故事</title>
+  <link rel="preload" as="image" href="assets/images/chapter-01.png" fetchpriority="high">
+  <style>
+    :root { --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px); }
+    * { box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #dceaf0;
+      -webkit-text-size-adjust: 100%;
+    }
+    body { overscroll-behavior: none; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    .app {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      height: 100vh;
+      height: 100svh;
+      height: 100dvh;
+      overflow: hidden;
+      background: transparent;
+    }
+    .track {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+    }
+    .track::-webkit-scrollbar { display: none; }
+    .chapter {
+      position: relative;
+      isolation: isolate;
+      flex: 0 0 100%;
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+      overflow: hidden;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      background: transparent;
+    }
+    .chapter[hidden] { display: none !important; }
+    .chapter-image {
+      position: absolute;
+      z-index: 0;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      user-select: none;
+      -webkit-user-drag: none;
+      opacity: 0;
+      transition: opacity .35s ease;
+    }
+    .chapter-image.is-loaded { opacity: 1; }
+    .chapter-button {
+      position: absolute;
+      z-index: 2;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -42%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 152px;
+      min-height: 50px;
+      padding: 0 24px;
+      border: 1px solid rgba(255,255,255,.96);
+      border-radius: 999px;
+      background: rgba(255, 250, 241, .94);
+      color: #594b40;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-decoration: none;
+      box-shadow: 0 5px 20px rgba(45, 46, 42, .2);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      cursor: pointer;
+      touch-action: manipulation;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .45s ease, transform .45s ease, background .18s ease, visibility .45s;
+    }
+    .chapter-image.is-loaded ~ .chapter-button {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translate(-50%, -50%);
+    }
+    .chapter-button:active { background: rgba(255,255,255,.99); transform: translate(-50%, -50%) scale(.97); }
+    .chapter-button:focus-visible { outline: 3px solid rgba(78,116,151,.85); outline-offset: 4px; }
+    @media (prefers-reduced-motion: reduce) {
+      .chapter-image, .chapter-button { transition: none; }
+      .track { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app" aria-label="四段旅程，一個故事">
+    <div class="track" id="track" aria-label="左右滑動瀏覽故事章節">
+      <section class="chapter" data-chapter="first" aria-label="第一章：初次的風景">
+        <img class="chapter-image" src="assets/images/chapter-01.png" alt="第一章插畫：初次的風景" fetchpriority="high" decoding="async" draggable="false">
+        <a class="chapter-button" data-link="memories" href="memories/index.html">回憶相簿</a>
+      </section>
+
+      <section class="chapter" data-chapter="second" aria-label="第二章：意外的轉彎">
+        <img class="chapter-image" src="assets/images/chapter-02.png" alt="第二章插畫：意外的轉彎" loading="eager" decoding="async" draggable="false">
+        <a class="chapter-button" data-link="second" href="chapters/chapter-02.html">開始旅程</a>
+      </section>
+
+      <section class="chapter" data-chapter="third" aria-label="第三章：更熟悉的時間" hidden>
+        <img class="chapter-image" src="assets/images/chapter-03.png" alt="第三章插畫：更熟悉的時間" loading="lazy" decoding="async" draggable="false">
+        <a class="chapter-button" data-link="third" href="chapters/chapter-03.html">開始旅程</a>
+      </section>
+
+      <section class="chapter" data-chapter="fourth" aria-label="第四章：下一段旅程" hidden>
+        <img class="chapter-image" src="assets/images/chapter-04.png" alt="第四章插畫：下一段旅程" loading="lazy" decoding="async" draggable="false">
+        <a class="chapter-button" data-link="fourth" href="chapters/chapter-04.html">開始旅程</a>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    /*
+      一、章節顯示設定：
+      true = 顯示該章；false = 暫時隱藏。
+      目前第三、第四章隱藏。
+      注意：這只是前端顯示控制，不是私密內容的存取權限保護。
+
+      二、按鈕網址集中在 CHAPTER_LINKS。
+      等你建立各個網頁後，只要修改對應網址即可。
+      網址以 GitHub Pages 專案根目錄為基準的相對路徑填寫。
+    */
+    const CHAPTER_VISIBILITY = {
+      first: true,
+      second: true,
+      third: false,
+      fourth: false
+    };
+
+    const CHAPTER_LINKS = {
+      memories: "memories/index.html",
+      second: "chapters/chapter-02.html",
+      third: "chapters/chapter-03.html",
+      fourth: "chapters/chapter-04.html"
+    };
+
+    document.querySelectorAll(".chapter").forEach(section => {
+      const key = section.dataset.chapter;
+      section.hidden = CHAPTER_VISIBILITY[key] !== true;
+    });
+
+    document.querySelectorAll(".chapter-button").forEach(link => {
+      const key = link.dataset.link;
+      if (CHAPTER_LINKS[key]) link.href = CHAPTER_LINKS[key];
+    });
+
+    const track = document.getElementById("track");
+    const images = [...document.querySelectorAll(".chapter-image")];
+
+    function markLoaded(image) {
+      image.classList.add("is-loaded");
+    }
+
+    images.forEach((image, index) => {
+      image.addEventListener("load", () => markLoaded(image), { once: true });
+      if (image.complete && image.naturalWidth > 0) markLoaded(image);
+
+      image.addEventListener("error", () => {
+        image.alt = "圖片無法載入，請確認 assets/images/ 中的檔名與路徑。";
+      }, { once: true });
+    });
+
+    // 預載下一張，提升滑動後的顯示速度；第三、四章隱藏時不會主動下載。
+    function preloadNextVisibleImage() {
+      const width = track.clientWidth || window.innerWidth;
+      const currentIndex = Math.max(0, Math.round(track.scrollLeft / width));
+      const next = images.slice(currentIndex + 1).find(img => !img.closest(".chapter").hidden);
+      if (next && !next.complete) {
+        const preload = new Image();
+        preload.decoding = "async";
+        preload.src = next.currentSrc || next.src;
+      }
+    }
+    track.addEventListener("scroll", () => {
+      window.requestAnimationFrame(preloadNextVisibleImage);
+    }, { passive: true });
+  </script>
+</body>
+</html>
