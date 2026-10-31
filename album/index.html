@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#171513"><title>我們的回憶</title>
 <style>
-:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#171513;color:#f7f3ed;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif}.top{position:sticky;top:0;z-index:3;background:#171513ed;backdrop-filter:blur(12px);padding:18px max(18px,4vw);border-bottom:1px solid #ffffff18}.top h1{font-size:22px;margin:0 0 6px}.muted{color:#b8afa5;font-size:13px}.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}button,select{background:#302c28;color:#fff;border:1px solid #514940;border-radius:10px;padding:10px 13px;font:inherit}button{cursor:pointer}.grid{padding:18px max(12px,3vw);display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px}.tile{position:relative;aspect-ratio:1/1;background:#292522;border-radius:12px;overflow:hidden;cursor:pointer}.tile img,.tile video{width:100%;height:100%;object-fit:cover;display:block}.video-placeholder{width:100%;height:100%;display:grid;place-items:center;color:#b8afa5;font-size:42px;background:linear-gradient(135deg,#302c28,#1f1c1a)}.tile .tag{position:absolute;bottom:7px;left:7px;background:#0009;padding:4px 7px;border-radius:6px;font-size:11px}.empty{text-align:center;padding:60px 20px;color:#b8afa5}.viewer{display:none;position:fixed;inset:0;background:#000;z-index:10;align-items:center;justify-content:center}.viewer.show{display:flex}.viewer img,.viewer video{max-width:100vw;max-height:100dvh;width:auto;height:auto;object-fit:contain}.close{position:absolute;top:14px;right:14px;z-index:2;background:#ffffff22;border:0}.nav{position:absolute;top:50%;transform:translateY(-50%);background:#ffffff22;border:0;font-size:26px}.prev{left:10px}.next{right:10px}.upload{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.upload input[type=file]{max-width:220px}.status{min-height:20px;margin-top:8px;font-size:13px;color:#d6c7ae}@media(min-width:850px){.grid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}}
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#171513;color:#f7f3ed;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif}.top{position:sticky;top:0;z-index:3;background:#171513ed;backdrop-filter:blur(12px);padding:18px max(18px,4vw);border-bottom:1px solid #ffffff18}.top h1{font-size:22px;margin:0 0 6px}.muted{color:#b8afa5;font-size:13px}.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}button,select{background:#302c28;color:#fff;border:1px solid #514940;border-radius:10px;padding:10px 13px;font:inherit}button{cursor:pointer}.grid{padding:18px max(12px,3vw);display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px}.tile{position:relative;aspect-ratio:1/1;background:#292522;border-radius:12px;overflow:hidden;cursor:pointer}.tile img,.tile video{width:100%;height:100%;object-fit:cover;display:block}.tile video{pointer-events:none;background:#292522}.video-placeholder{width:100%;height:100%;display:grid;place-items:center;color:#b8afa5;font-size:42px;background:linear-gradient(135deg,#302c28,#1f1c1a)}.tile .tag{position:absolute;bottom:7px;left:7px;background:#0009;padding:4px 7px;border-radius:6px;font-size:11px}.empty{text-align:center;padding:60px 20px;color:#b8afa5}.viewer{display:none;position:fixed;inset:0;background:#000;z-index:10;align-items:center;justify-content:center}.viewer.show{display:flex}.viewer img,.viewer video{max-width:100vw;max-height:100dvh;width:auto;height:auto;object-fit:contain}.close{position:absolute;top:14px;right:14px;z-index:2;background:#ffffff22;border:0}.nav{position:absolute;top:50%;transform:translateY(-50%);background:#ffffff22;border:0;font-size:26px}.prev{left:10px}.next{right:10px}.upload{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.upload input[type=file]{max-width:220px}.status{min-height:20px;margin-top:8px;font-size:13px;color:#d6c7ae}@media(min-width:850px){.grid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}}
 </style></head><body>
 <header class="top"><h1>我們的回憶</h1><div class="muted" id="subtitle">正在載入回憶…</div><div class="bar"><select id="folder"><option value="">全部回憶</option></select><button id="reload">重新整理</button><div class="upload"><input id="files" type="file" accept="image/*,video/*" multiple><button id="uploadBtn">上傳照片／影片</button></div></div><div class="status" id="status"></div></header>
 <main id="grid" class="grid"></main><div id="empty" class="empty" hidden>目前沒有可顯示的回憶</div>
@@ -16,23 +16,52 @@ function posterFor(video){
   return items.find(x=>x.folderId===video.folderId && x.mediaType==='photo' && /poster/i.test(x.name) && x.name.toLowerCase().includes(stem.toLowerCase()))
     || items.find(x=>x.folderId===video.folderId && x.mediaType==='photo' && /poster/i.test(x.name) && stem.toLowerCase().includes(x.name.replace(/[_ .-]?poster\.(jpg|jpeg|png|webp)$/i,'').toLowerCase()));
 }
-function render(){let a=filtered();$('grid').innerHTML=a.map((m,i)=>{if(m.mediaType==='photo')return `<div class="tile" data-i="${i}"><img loading="lazy" src="${API}/media/${encodeURIComponent(m.id)}" alt="${esc(m.name)}"></div>`;const poster=posterFor(m);return `<div class="tile" data-i="${i}">${poster?`<img loading="lazy" src="${API}/media/${encodeURIComponent(poster.id)}" alt="${esc(m.name)}">`:`<div class="video-placeholder">▶</div>`}<span class="tag">▶ 影片</span></div>`}).join('');$('empty').hidden=a.length>0;$('grid').querySelectorAll('.tile').forEach(el=>{el.addEventListener('pointerdown',()=>{const i=Number(el.dataset.i),m=filtered()[i];if(m&&m.mediaType==='video')ensureVideoReady(m)},{passive:true});el.addEventListener('click',()=>openViewer(Number(el.dataset.i)));});}
 const preloaded=new Map();
 function mediaUrl(m){return API+'/media/'+encodeURIComponent(m.id)}
 function ensureVideoReady(m){
   if(!m||m.mediaType!=='video')return null;
   let v=preloaded.get(m.id);
   if(v)return v;
-  v=document.createElement('video');v.preload='auto';v.muted=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');v.src=mediaUrl(m);v.dataset.mediaId=m.id;
-  $('preloadBin').appendChild(v);preloaded.set(m.id,v);
+  v=document.createElement('video');v.className='video-thumb';v.preload='metadata';v.muted=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');v.src=mediaUrl(m)+'#t=0.1';v.dataset.mediaId=m.id;
+  preloaded.set(m.id,v);
   try{v.load()}catch(e){}
   return v;
 }
+function render(){
+  let a=filtered();
+  $('grid').innerHTML=a.map((m,i)=>{
+    if(m.mediaType==='photo')return `<div class="tile" data-i="${i}"><img loading="lazy" src="${mediaUrl(m)}" alt="${esc(m.name)}"></div>`;
+    const poster=posterFor(m);
+    return `<div class="tile" data-i="${i}" data-media-id="${esc(m.id)}">${poster?`<img loading="lazy" src="${mediaUrl(poster)}" alt="${esc(m.name)}">`:''}<span class="tag">▶ 影片</span></div>`;
+  }).join('');
+  $('empty').hidden=a.length>0;
+  $('grid').querySelectorAll('.tile').forEach(el=>{
+    const m=a[Number(el.dataset.i)];
+    if(m&&m.mediaType==='video'&&!posterFor(m)){
+      const v=ensureVideoReady(m);v.controls=false;v.autoplay=false;v.muted=true;
+      if(v.parentElement!==el)el.appendChild(v);
+    }
+    el.addEventListener('pointerdown',()=>{if(m&&m.mediaType==='video')ensureVideoReady(m)},{passive:true});
+    el.addEventListener('click',()=>openViewer(Number(el.dataset.i)));
+  });
+}
+function returnVideoToTile(m){
+  if(!m)return;
+  const v=preloaded.get(m.id);
+  const tile=[...$('grid').querySelectorAll('.tile')].find(el=>el.dataset.mediaId===String(m.id));
+  if(v&&tile){v.pause();v.onended=null;v.muted=true;v.controls=false;v.autoplay=false;tile.appendChild(v);}
+  else if(v){v.pause();v.onended=null;v.muted=true;$('preloadBin').appendChild(v);}
+}
 function warmAround(i){
   const a=filtered();if(!a.length)return;
-  // 只預載目前位置附近的一支影片，避免一次下載整個相簿。
+  // 只將目前位置附近的一支影片提升為積極預載；其他縮圖只讀取影片中繼資料與首畫面。
   for(let step=0;step<Math.min(a.length,3);step++){
-    const m=a[(i+step)%a.length];if(m.mediaType==='video'){ensureVideoReady(m);break;}
+    const m=a[(i+step)%a.length];
+    if(m.mediaType==='video'){
+      const v=ensureVideoReady(m);
+      if(v.preload!=='auto'){v.preload='auto';try{v.load()}catch(e){}}
+      break;
+    }
   }
 }
 function openViewer(i){let a=filtered();if(!a.length)return;index=i;warmAround(index);showItem()}
@@ -54,8 +83,8 @@ function showItem(){
   $('viewer').classList.add('show');
   warmAround((index+1)%a.length);
 }
-function move(n){let a=filtered();if(!a.length)return;const old=a[index];if(old&&old.mediaType==='video'){const v=preloaded.get(old.id);if(v){v.pause();v.onended=null;v.muted=true;$('preloadBin').appendChild(v)}}index=(index+n+a.length)%a.length;warmAround(index);showItem()}
-$('close').onclick=()=>{$('viewer').classList.remove('show');const a=filtered(),m=a[index];if(m&&m.mediaType==='video'){const v=preloaded.get(m.id);if(v){v.pause();v.onended=null;v.muted=true;$('preloadBin').appendChild(v)}}$('stage').innerHTML='';warmAround(index)};
+function move(n){let a=filtered();if(!a.length)return;const old=a[index];if(old&&old.mediaType==='video')returnVideoToTile(old);index=(index+n+a.length)%a.length;warmAround(index);showItem()}
+$('close').onclick=()=>{$('viewer').classList.remove('show');const a=filtered(),m=a[index];if(m&&m.mediaType==='video')returnVideoToTile(m);$('stage').innerHTML='';warmAround(index)};
 $('prev').onclick=()=>move(-1);$('next').onclick=()=>move(1);
 document.addEventListener('keydown',e=>{if(!$('viewer').classList.contains('show'))return;if(e.key==='Escape')$('close').click();if(e.key==='ArrowLeft')move(-1);if(e.key==='ArrowRight')move(1)});
 $('folder').onchange=()=>{for(const v of preloaded.values()){v.pause();v.removeAttribute('src');v.load()}preloaded.clear();render();warmAround(0)};
