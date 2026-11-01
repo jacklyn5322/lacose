@@ -1,0 +1,4 @@
+const CACHE='private-album-thumbnails-v2';
+self.addEventListener('install',e=>e.waitUntil(self.skipWaiting()));
+self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k.startsWith('private-album-thumbnails-')&&k!==CACHE)await caches.delete(k);await self.clients.claim();})()));
+self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(e.request.method!=='GET'||!u.pathname.includes('/thumbnail/'))return;e.respondWith((async()=>{const c=await caches.open(CACHE);try{const r=await fetch(e.request);if(r.ok&&r.headers.get('content-type')?.startsWith('image/'))await c.put(e.request,r.clone());return r;}catch(err){const hit=await c.match(e.request);if(hit)return hit;throw err;}})());});
