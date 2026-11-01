@@ -4,7 +4,6 @@
  * 例如：https://your-service-xxxxx.run.app
  */
 window.ALBUM_CONFIG = {
-  ALBUM_API_BASE: "https://請填入你的-cloud-run-服務網址",
-  // 若尚未設定 Cloud Run 網址，可先使用 DEMO_MODE 預覽版面。
-  DEMO_MODE: true
+  ALBUM_API_BASE: "你的Cloud Run HTTPS網址",
+  DEMO_MODE: false
 };
