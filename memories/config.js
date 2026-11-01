@@ -4,6 +4,6 @@
  * 例如：https://your-service-xxxxx.run.app
  */
 window.ALBUM_CONFIG = {
-  ALBUM_API_BASE: "你的Cloud Run HTTPS網址",
+  ALBUM_API_BASE: "https://private-album-api-796382184623.asia-east1.run.app",
   DEMO_MODE: false
 };
