@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1800" preserveAspectRatio="xMidYMid slice">
+<defs>
+ <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#76618f"/><stop offset=".26" stop-color="#bd8aaa"/><stop offset=".53" stop-color="#f2ad9c"/><stop offset=".72" stop-color="#f7c49f"/><stop offset="1" stop-color="#e9a58f"/></linearGradient>
+ <radialGradient id="glow"><stop stop-color="#fff0c6" stop-opacity=".95"/><stop offset="1" stop-color="#ffcfad" stop-opacity="0"/></radialGradient>
+ <linearGradient id="paper" x2="0" y2="1"><stop stop-color="#fff3df" stop-opacity=".88"/><stop offset="1" stop-color="#f8dfcf" stop-opacity=".9"/></linearGradient>
+ <filter id="blur"><feGaussianBlur stdDeviation="24"/></filter>
+ <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".7" numOctaves="3"/><feColorMatrix values=".8 0 0 0 .2 .8 0 0 0 .15 .8 0 0 0 .1 0 0 0 .10 0"/></filter>
+</defs>
+<rect width="900" height="1800" fill="url(#sky)"/>
+<circle cx="450" cy="770" r="260" fill="url(#glow)" filter="url(#blur)"/>
+<!-- layered sunset clouds -->
+<g fill="#fce1d5" opacity=".35" filter="url(#blur)"><ellipse cx="170" cy="270" rx="280" ry="90"/><ellipse cx="690" cy="390" rx="330" ry="100"/><ellipse cx="360" cy="610" rx="370" ry="70"/><ellipse cx="770" cy="760" rx="260" ry="90"/></g>
+<g fill="#fff0e3" opacity=".22"><path d="M0 330 Q160 250 300 340 T610 320 T900 300 V430 Q700 390 550 430 T220 420 T0 450Z"/><path d="M0 560 Q170 490 340 560 T680 540 T900 550 V650 Q700 610 500 650 T180 640 T0 680Z"/></g>
+<!-- skyline -->
+<path d="M0 1460h45v-95h35v95h30v-150h50v150h30v-80h42v80h38v-190h56v190h32v-115h38v115h30v-230h62v230h35v-120h50v120h25v-175h48v175h34v-105h48v105h28v-205h58v205h35v-130h40v130h38v-170h60v170h40v-90h35v90h35v-145h50v145h20v340H0Z" fill="#4c4260" opacity=".68"/>
+<path d="M0 1515h900v285H0Z" fill="#453d58" opacity=".45"/>
+<g fill="#ffdca8" opacity=".7"><path d="M430 1280h32v180h-32zM437 1235h18v45h-18z"/><path d="M170 1370h5v10h-5m18 0h5v10h-5m230-30h5v10h-5m20 0h5v10h-5m210 25h5v10h-5m18 0h5v10h-5"/></g>
+<!-- paper-like lower veil -->
+<rect y="880" width="900" height="920" fill="url(#paper)" opacity=".48"/>
+<!-- flower stems left/right -->
+<g fill="none" stroke="#59634b" stroke-width="5" opacity=".85"><path d="M35 1800Q70 1550 120 1430M45 1800Q20 1620 35 1540M850 1800Q810 1570 770 1480M875 1800Q895 1630 870 1550"/></g>
+<g fill="#8c8bb0" opacity=".95"><g transform="translate(105 1470)"><circle r="12"/><ellipse cy="-20" rx="10" ry="18"/><ellipse cy="20" rx="10" ry="18"/><ellipse cx="-20" rx="18" ry="10"/><ellipse cx="20" rx="18" ry="10"/></g><g transform="translate(65 1590)"><circle r="10"/><ellipse cy="-17" rx="8" ry="15"/><ellipse cy="17" rx="8" ry="15"/><ellipse cx="-17" rx="15" ry="8"/><ellipse cx="17" rx="15" ry="8"/></g><g transform="translate(800 1530)"><circle r="12"/><ellipse cy="-20" rx="10" ry="18"/><ellipse cy="20" rx="10" ry="18"/><ellipse cx="-20" rx="18" ry="10"/><ellipse cx="20" rx="18" ry="10"/></g><g transform="translate(845 1650)"><circle r="10"/><ellipse cy="-17" rx="8" ry="15"/><ellipse cy="17" rx="8" ry="15"/><ellipse cx="-17" rx="15" ry="8"/><ellipse cx="17" rx="15" ry="8"/></g></g>
+<g fill="#fff0d7"><circle cx="35" cy="1510" r="7"/><circle cx="130" cy="1600" r="6"/><circle cx="780" cy="1650" r="7"/><circle cx="865" cy="1480" r="6"/></g>
+<!-- warm bokeh -->
+<g fill="#ffe7ae" opacity=".6"><circle cx="70" cy="90" r="7"/><circle cx="190" cy="160" r="5"/><circle cx="760" cy="110" r="7"/><circle cx="840" cy="260" r="5"/><circle cx="300" cy="720" r="4"/></g>
+<rect width="900" height="1800" filter="url(#grain)" opacity=".16"/>
+</svg>
