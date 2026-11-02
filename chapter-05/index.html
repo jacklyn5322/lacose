@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#b98c9f">
+  <meta name="description" content="散落的片刻，收藏我們一起度過的平凡日子。">
+  <title>散落的片刻｜Little Moments, Forever</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./config.js"></script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <div class="ambient" aria-hidden="true"><span class="string-lights"></span><span class="leaf leaf-one">✿</span><span class="leaf leaf-two">✿</span></div>
+  <main class="page-shell">
+    <header class="topbar">
+      <a class="paper-button back-link" href="../index.html"><span class="button-icon">⌂</span>返回首頁</a>
+      <span class="chapter-label">OUR EVERYDAY</span>
+    </header>
+
+    <section class="hero" aria-labelledby="page-title">
+      <p class="eyebrow">OUR SCATTERED MOMENTS</p>
+      <h1 id="page-title">散落的片刻<span>♡</span></h1>
+      <p class="english-title">Little Moments, Forever</p>
+      <div class="quote-paper"><p>那些看似平凡的日常，<br>都是我們之間，獨一無二的片刻。</p></div>
+      <a class="hero-cta" href="#memories">拾起那些片刻 <span>↓</span></a>
+      <span class="camera-doodle" aria-hidden="true">◎</span>
+    </section>
+
+    <section class="memories-section" id="memories">
+      <div class="section-heading"><div><p class="eyebrow">FRAGMENTS OF US</p><h2>把日子，拼成日常</h2><p>不必盛大，值得收藏的，往往是那些不經意的瞬間。</p></div><select class="year-chip" id="year-chip" aria-label="選擇回憶年份"><option>讀取中</option></select></div>
+      <div class="filter-paper"><nav class="month-filter" id="month-filter" aria-label="依月份篩選回憶"><button class="filter-chip active" data-month="all">全部</button></nav><div class="view-switch" aria-label="切換相簿排列"><button type="button" class="view-button active" data-view="grid" aria-label="格狀排列">▦</button><button type="button" class="view-button" data-view="list" aria-label="列表排列">☷</button></div></div>
+      <section class="memory-grid" id="memory-grid" aria-live="polite"><div class="loading-card">♡　正在打開我們的日常相簿…</div></section>
+      <section class="empty-state scrapbook-empty" id="empty-state" hidden><div class="empty-sprig sprig-left" aria-hidden="true">✿</div><div class="empty-sprig sprig-right" aria-hidden="true">✿</div><div class="empty-photo-icon" aria-hidden="true">▧</div><h3>還沒有回憶</h3><p>一起從「新增一段我們的片刻」開始，<br>把日常收藏進相簿裡吧 ♡</p></section>
+      <p class="status-line" id="status-line" role="status"></p>
+      <a class="add-memory-paper" id="add-memory" href="./"><span>＋</span>新增一段我們的片刻 <b>♡</b></a>
+    </section>
+    <footer class="footer"><span>MADE OF LITTLE MOMENTS</span><span>我們的故事，由片刻慢慢拼成。</span></footer>
+  </main>
+
+  <dialog class="memory-dialog" id="memory-dialog"><button class="dialog-close" id="dialog-close" aria-label="關閉">×</button><div class="dialog-cover" id="dialog-cover"></div><div class="dialog-content"><p class="eyebrow" id="dialog-date"></p><h2 id="dialog-title"></h2><p class="dialog-location" id="dialog-location"></p><p class="dialog-description" id="dialog-description"></p><div class="dialog-photos" id="dialog-photos"></div></div></dialog>
+  <a class="mobile-add-fab" id="mobile-add" href="#" aria-label="新增一段回憶">＋</a>
+</body>
+</html>
