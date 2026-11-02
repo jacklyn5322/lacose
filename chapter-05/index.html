@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5eee6">
+  <meta name="description" content="日常的風景，收藏我們一起度過的平凡日子。">
+  <title>日常的風景｜Our Everyday</title>
+  <link rel="stylesheet" href="chapter-05/style.css">
+  <script src="chapter-05/config.js"></script>
+  <script defer src="chapter-05/app.js"></script>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <main class="page-shell">
+    <header class="topbar">
+      <a class="back-link" href="../index.html">← <span>返回首頁</span></a>
+      <span class="chapter-label">CHAPTER 05 · OUR EVERYDAY</span>
+    </header>
+
+    <section class="hero">
+      <p class="eyebrow">LITTLE MOMENTS, FOREVER</p>
+      <h1>日常的風景</h1>
+      <p class="english-title">Our Everyday</p>
+      <p class="hero-copy">今天，也想和你一起度過。<br>把平凡的日子，收藏成不平凡的回憶。</p>
+      <a class="hero-cta" href="#memories">翻開我們的日常 <span>↓</span></a>
+      <span class="hero-stamp">EST. 2026<br>♡ TOGETHER</span>
+    </section>
+
+    <section class="intro-row" id="memories">
+      <div><p class="eyebrow">A JOURNAL OF US</p><h2>生活裡的小小紀念</h2><p class="section-copy">不一定是特別的日子，只要有你，就值得記得。</p></div>
+      <div class="year-chip">2026 <span>♡</span></div>
+    </section>
+
+    <nav class="month-filter" id="month-filter" aria-label="依月份篩選回憶">
+      <button class="filter-chip active" data-month="all">全部</button>
+      <span class="filter-loading">正在整理回憶…</span>
+    </nav>
+
+    <section class="memory-grid" id="memory-grid" aria-live="polite">
+      <div class="loading-card"><span class="loading-dot"></span>正在打開我們的日常相簿…</div>
+    </section>
+    <section class="empty-state" id="empty-state" hidden>
+      <div class="empty-heart">♡</div><h3>這一頁，等著新的日常</h3><p>等下一次一起出門、一起吃飯、一起散步，<br>再把那天的風景收藏進來。</p>
+    </section>
+    <p class="status-line" id="status-line" role="status"></p>
+
+    <footer class="footer"><span>MADE OF LITTLE MOMENTS</span><span>我們的日常，未完待續。</span></footer>
+  </main>
+  <button class="admin-entry" id="admin-entry" type="button" aria-label="管理者入口" title="管理者入口">✳</button>
+
+  <dialog class="memory-dialog" id="memory-dialog">
+    <button class="dialog-close" id="dialog-close" aria-label="關閉">×</button>
+    <div class="dialog-cover" id="dialog-cover"></div>
+    <div class="dialog-content"><p class="eyebrow" id="dialog-date"></p><h2 id="dialog-title"></h2><p class="dialog-location" id="dialog-location"></p><p class="dialog-description" id="dialog-description"></p><div class="dialog-photos" id="dialog-photos"></div></div>
+  </dialog>
+</body>
+</html>
