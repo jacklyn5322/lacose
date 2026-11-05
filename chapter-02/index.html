@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f8edda">
+<meta name="description" content="台南即興冒險：沒有固定路線，下一站去哪裡，就由我們決定。">
+<title>台南・即興冒險</title>
+<style>
+:root{color-scheme:light;--paper:#f8edda;--ink:#765239;--safe-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html{min-height:100%;background:var(--paper);-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;min-height:100vh;min-height:100svh;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;overscroll-behavior-y:none}
+main{width:100%;max-width:560px;margin:0 auto;padding:0 0 calc(18px + var(--safe-bottom))}
+.artwork{position:relative;width:100%;line-height:0;overflow:hidden;background:var(--paper)}
+.artwork img{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
+.hotspot{position:absolute;left:8%;width:84%;height:8.5%;border:0;border-radius:999px;background:transparent;cursor:pointer;-webkit-tap-highlight-color:rgba(190,105,79,.16);touch-action:manipulation}
+.hotspot:focus-visible{outline:3px solid #8d573c;outline-offset:3px;background:rgba(255,255,255,.12)}
+.start{top:72.5%}.album{top:83.5%}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.notice{display:none;margin:0 16px 12px;padding:13px 16px;border:1px solid #d9b58f;border-radius:14px;background:#fffaf0;color:#765239;font-size:14px;line-height:1.6;text-align:center}
+.notice.show{display:block}
+@media(min-width:561px){body{padding:18px 0}main{border-radius:18px;overflow:hidden;box-shadow:0 10px 40px rgba(92,65,42,.12)}}
+@media(prefers-reduced-motion:no-preference){.hotspot{transition:background-color .15s ease}.hotspot:active{background:rgba(255,255,255,.2)}}
+</style>
+</head>
+<body>
+<main>
+<div class="notice" id="notice" role="status" aria-live="polite"></div>
+<section class="artwork" aria-label="台南即興冒險首頁">
+<img src="assets/tainan-home-mobile.png" alt="台南手繪插畫首頁，有台南街屋、廟宇、雙人旅人、貓咪與在地甜品。" width="1024" height="1536">
+<button class="hotspot start" type="button" id="startButton"><span class="sr-only">開始今天的旅程</span></button>
+<button class="hotspot album" type="button" id="albumButton"><span class="sr-only">打開旅程回憶相簿</span></button>
+</section>
+</main>
+<script>
+const notice=document.getElementById("notice");
+function showNotice(message){notice.textContent=message;notice.classList.add("show");notice.scrollIntoView({behavior:"smooth",block:"nearest"});}
+document.getElementById("startButton").addEventListener("click",()=>{window.location.href="destination.html";});
+document.getElementById("albumButton").addEventListener("click",()=>showNotice("旅程回憶相簿頁面正在設計中。"));
+</script>
+</body>
+</html>
