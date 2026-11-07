@@ -1,0 +1,27 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#fbf2e3"><title>回憶相簿｜台南・即興冒險</title><link rel="stylesheet" href="assets/site.css"><script src="assets/global-reset.js?v=5.9.0" defer></script></head><body class="theme-album"><main class="page"><header class="topbar"><a class="nav" href="index.html" aria-label="返回本章首頁">⌂</a><div class="brand">回憶相簿</div><a class="nav" href="../index.html" aria-label="返回共同首頁">↗</a></header><section class="content"><div class="tag">OUR JOURNEY ALBUM</div><h1>把今天收藏起來</h1><p class="lead">旅程資料與原始媒體都從雲端讀取，依實際紀錄順序排列。點擊照片或影片即可全螢幕瀏覽。</p><div class="card"><h2>今日旅程插畫</h2><img id="illustrationPreview" class="photo-preview hidden" alt="今日旅程插畫"><p class="small">最後的手繪地圖由管理後台統一上傳。</p></div><div class="card"><h2>旅程足跡</h2><div id="albumList">正在讀取雲端資料……</div></div><div class="actions"><a class="btn secondary" href="today.html">繼續今日旅程</a></div></section></main><script src="assets/app.js"></script><script src="assets/cloud.js?v=5.9.0"></script><script src="assets/lightbox.js?v=5.9.0"></script><script>
+(async()=>{
+ const el=document.getElementById('albumList'),img=document.getElementById('illustrationPreview');
+ try{
+  const gate=await fetch(Chapter02Cloud.API+'/public/status',{cache:'no-store'});
+  const gateData=await gate.json().catch(()=>({}));
+  if(!gate.ok || gateData.isOpen!==true){
+   el.innerHTML='<div class="empty"><h2>回憶相簿暫時關閉</h2><p>目前相簿已由管理員關閉。今日旅程與今日禮物仍可繼續使用，你們的資料與照片都會保留。</p><a class="btn secondary" href="today.html">返回今日旅程</a></div>';
+   return;
+  }
+  const d=await Chapter02Cloud.loadState(),map=Chapter02Cloud.API+'/public/chapter-02/map';
+  const r=await fetch(map,{method:'HEAD',cache:'no-store'});
+  if(r.ok){img.src=map;img.classList.remove('hidden')}
+  const gallery=[];
+  el.innerHTML=d.places.length?d.places.map((p,i)=>{
+   const mediaMarkup=(p.media||[]).map(m=>{
+    const isImage=Chapter02Cloud.canPreviewImage(m),isVideo=m.mimeType?.startsWith('video/');
+    if(!isImage&&!isVideo)return `<div class="media-file"><a href="${Chapter02Cloud.mediaUrl(m,true)}">下載／開啟原始檔案：${esc(m.name||'檔案')}</a></div>`;
+    const index=gallery.push({name:m.name||'旅程媒體',mimeType:m.mimeType,url:Chapter02Cloud.mediaUrl(m),downloadUrl:Chapter02Cloud.mediaUrl(m,true),mediaType:isVideo?'video':'image'})-1;
+    return `<button type="button" class="album-media-trigger" data-gallery-index="${index}" aria-label="全螢幕瀏覽 ${esc(m.name||'媒體')}">${isImage?`<img loading="lazy" decoding="async" src="${Chapter02Cloud.mediaUrl(m)}" alt="${esc(m.name||'旅程照片')}">`:`<span class="album-video-tile"><span>▶</span><span>播放影片</span></span>`}</button><div class="album-media-name">${esc(m.name||'')}</div>`;
+   }).join('');
+   return `<article class="entry"><b>${i+1}. ${esc(p.name)}</b><div class="small">${new Date(p.createdAt).toLocaleString('zh-TW')}</div><p>${esc(p.note||'')}</p><p>${esc(p.answer||'')}</p>${(p.tasks||[]).map(t=>`<div class="small">${t.done?'✓':'○'} ${esc(t.category)}：${esc(t.text)}</div>`).join('')}<div class="album-media-grid">${mediaMarkup}</div></article>`;
+  }).join(''):'<div class="empty">今天還沒有景點紀錄。開始旅程後，這裡會自動整理足跡。</div>';
+  window.Chapter02Lightbox.bind(el,gallery);
+ }catch(e){el.textContent='雲端相簿讀取失敗：'+e.message}
+})();
+</script></body></html>
