@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f5efe3">
+<title>第二章管理後台</title>
+<link rel="stylesheet" href="../assets/site.css">
+<style>
+.admin-wrap{max-width:760px;margin:0 auto;padding:env(safe-area-inset-top) 16px calc(28px + env(safe-area-inset-bottom))}
+.admin-top{display:flex;align-items:center;justify-content:space-between;padding:16px 0 22px}
+.admin-top a{color:inherit;text-decoration:none;font-size:22px}
+.admin-card{background:#fffdf8;border:1px solid #eadfce;border-radius:20px;padding:20px;margin:16px 0;box-shadow:0 8px 24px #654b2b0b}
+.admin-card h2{margin:0 0 9px;font-size:20px}.admin-card p{font-size:14px;line-height:1.8;color:#8d7862}
+.admin-card input[type=file]{width:100%;padding:12px;border:1px dashed #cdb99d;border-radius:12px;background:#fcf8f0}
+.admin-preview{display:none;width:100%;max-height:340px;object-fit:contain;margin-top:14px;border-radius:12px;background:#f1eadf}
+.admin-status{font-size:13px;line-height:1.7;min-height:22px;margin-top:10px;color:#718064}
+.admin-danger{border-color:#e8d2c9}.admin-danger .btn{background:#a75c50}
+.admin-note{background:#f5eee3;border-radius:13px;padding:13px 15px;font-size:12px;line-height:1.8;color:#826c55;margin-top:18px}
+@media(min-width:700px){.admin-wrap{padding-left:24px;padding-right:24px}}
+</style>
+</head>
+<body>
+<main class="admin-wrap">
+<header class="admin-top"><a href="../index.html" aria-label="返回第二章首頁">‹</a><strong>CHAPTER 02 · ADMIN</strong><a href="../index.html" aria-label="返回首頁">⌂</a></header>
+<section class="content" style="padding-top:8px">
+<div class="tag">PRIVATE WORKSPACE</div>
+<h1>第二章管理後台</h1>
+<p class="lead">只保留兩項必要功能，讓測試與正式使用都更簡單。</p>
+<article class="admin-card">
+<div class="tag">01 · FINAL MAP</div>
+<h2>上傳最後的手繪地圖</h2>
+<p>選擇最後完成的手繪地圖，確認預覽後儲存。回憶相簿會在最上方顯示這張地圖。</p>
+<label for="mapFile">選擇地圖圖片</label>
+<input id="mapFile" type="file" accept="image/jpeg,image/png,image/webp">
+<img id="mapPreview" class="admin-preview" alt="手繪地圖預覽">
+<div id="mapStatus" class="admin-status" role="status" aria-live="polite">尚未選擇圖片。</div>
+<button class="btn" id="saveMap" type="button" disabled>儲存手繪地圖</button>
+</article>
+<article class="admin-card admin-danger">
+<div class="tag">02 · RESET CHAPTER 02</div>
+<h2>清除第二章所有儲存資料</h2>
+<p>清除這個瀏覽器中第二章的旅程、目的地、任務、回答、照片、禮物進度及相簿資料，讓系統回到初始狀態。</p>
+<div class="notice">注意：目前第二章資料仍使用同一瀏覽器的 localStorage。此功能會清除目前瀏覽器的第二章資料，不會清除其他章節，也不會刪除已上傳的手繪地圖（地圖會在清除後保留）。</div>
+<div id="clearStatus" class="admin-status" role="status" aria-live="polite"></div>
+<button class="btn" id="clearData" type="button">清除第二章所有資料</button>
+</article>
+<div class="admin-note">管理後台僅提供上述兩項功能。此版本依照目前網站的本機資料架構運作；跨裝置雲端同步及 Google Drive 雲端地圖上傳，尚未接入 Cloud Run，不能將本機儲存誤認為雲端備份。</div>
+</section>
+</main>
+<script src="../assets/app.js"></script>
+<script>
+const KEY='ch2_journey_v2';
+const $=id=>document.getElementById(id);
+let selectedMap=null;
+function currentData(){try{return JSON.parse(localStorage.getItem(KEY))||{places:[],gifts:[]}}catch{return {places:[],gifts:[]}}}
+function readAsDataURL(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(new Error('讀取圖片失敗'));reader.readAsDataURL(file)})}
+const existingMap=currentData().illustration;
+if(existingMap){$('mapPreview').src=existingMap;$('mapPreview').style.display='block';$('mapStatus').textContent='目前已有一張手繪地圖。選擇新圖片即可替換。'}
+$('mapFile').addEventListener('change',async e=>{
+ selectedMap=e.target.files?.[0]||null;
+ if(!selectedMap){$('saveMap').disabled=true;return}
+ if(!['image/jpeg','image/png','image/webp'].includes(selectedMap.type)){$('mapStatus').textContent='格式不支援，請選擇 JPG、PNG 或 WebP。';selectedMap=null;$('saveMap').disabled=true;return}
+ if(selectedMap.size>12*1024*1024){$('mapStatus').textContent='圖片超過 12 MB，請先縮小圖片再上傳。';selectedMap=null;$('saveMap').disabled=true;return}
+ try{$('mapPreview').src=await readAsDataURL(selectedMap);$('mapPreview').style.display='block';$('mapStatus').textContent=`已選擇：${selectedMap.name}（${(selectedMap.size/1024/1024).toFixed(2)} MB）`;$('saveMap').disabled=false}
+ catch(err){$('mapStatus').textContent=err.message;$('saveMap').disabled=true}
+});
+$('saveMap').addEventListener('click',async()=>{
+ if(!selectedMap)return;
+ const btn=$('saveMap');btn.disabled=true;$('mapStatus').textContent='正在儲存…';
+ try{const data=currentData();data.illustration=await readAsDataURL(selectedMap);localStorage.setItem(KEY,JSON.stringify(data));$('mapStatus').textContent='手繪地圖已儲存，回憶相簿重新整理後即可查看。';selectedMap=null;$('mapFile').value='';}
+ catch(err){$('mapStatus').textContent='儲存失敗：瀏覽器可用空間可能不足，請縮小圖片後再試。';}
+ finally{btn.disabled=false;}
+});
+$('clearData').addEventListener('click',()=>{
+ const ok=confirm('確定清除第二章所有旅程與測試資料？\n\n包含目的地、任務、回答、照片、禮物進度及相簿。\n手繪地圖會保留。此動作無法復原。');
+ if(!ok)return;
+ try{
+  const data=currentData();const map=data.illustration||'';
+  localStorage.removeItem(KEY);
+  // Preserve the final hand-drawn map as the only retained Chapter 02 setting.
+  if(map)localStorage.setItem(KEY,JSON.stringify({places:[],gifts:[],illustration:map,startedAt:new Date().toISOString()}));
+  $('clearStatus').textContent='第二章資料已清除，手繪地圖已保留。';
+ }catch(err){$('clearStatus').textContent='清除時發生錯誤：'+err.message;}
+});
+</script>
+</body>
+</html>
